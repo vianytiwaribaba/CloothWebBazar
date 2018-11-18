@@ -10,11 +10,11 @@ namespace ClothBajar.DataBase.Migrations
             CreateTable(
                 "dbo.Categories",
                 c => new
-                    {
-                        ID = c.Int(nullable: false, identity: true),
-                        Name = c.String(),
-                        Description = c.String(),
-                    })
+                {
+                    ID = c.Int(nullable: false, identity: true),
+                    Name = c.String(),
+                    Description = c.String(),
+                })
                 .PrimaryKey(t => t.ID);
             
             CreateTable(

@@ -10,7 +10,7 @@ namespace ClothBajar.Entities
     {
         public decimal Price { get; set; }
 
-        public Category Category { get; set; }
+        public Category Category { get; set; } //category ko reference kiya hua h to product kisi category lo belong kregi
 
         
     }
