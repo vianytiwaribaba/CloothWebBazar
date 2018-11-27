@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace ClothBajar.WebNew.Controllers
 {
-    public class CategoryController : Controller
+    public class CategoryController : Controller   
     {
         CategoriesService categoryService = new CategoriesService();
         [HttpGet]

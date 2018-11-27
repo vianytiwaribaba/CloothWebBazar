@@ -26,6 +26,14 @@ namespace ClothBajar.Services
             }
         }
 
+        public List<Category> GetFeaturedCategories() //index ka h joki hmko database se as a list la ke dega
+        {
+            using (var context = new CBContext())
+            {
+                return context.Categories.Where(x=>x.IsFeatured && x.ImageURL != null).ToList();
+            }
+        }
+
         public void SaveCategory(Category category) //ye create category ko save krne ke liye 
         {
             using (var context = new CBContext())

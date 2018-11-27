@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace ClothBajar.Services
 {
@@ -18,11 +19,22 @@ namespace ClothBajar.Services
             }
         }
 
-        public List<Product> GetProducts()
+        public List<Product> GetProducts(List<int> IDs)
         {
             using (var context = new CBContext())
             {
-                return context.Products.ToList(); //index ka h joki hmko database se as a list la ke dega
+                return context.Products.Where(product => IDs.Contains(product.ID)).ToList(); // Cookie ka h 
+            }
+        }
+
+        public List<Product> GetProducts(int pageNo)
+        {
+            int pageSize = 5;
+            using (var context = new CBContext())
+            {
+                //return context.Products.OrderBy(x => x.ID).Skip((pageNo-1)* pageSize).Take(pageSize).Include(x=>x.Category).ToList(); //index ka h joki hmko database se as a list la ke dega
+
+                return context.Products.Include(x => x.Category).ToList(); //index ka h joki hmko database se as a 
             }
         }
 
@@ -30,6 +42,7 @@ namespace ClothBajar.Services
         {
             using (var context = new CBContext())
             {
+                context.Entry(product.Category).State = System.Data.Entity.EntityState.Unchanged;
                 context.Products.Add(product);
                 context.SaveChanges(); //ye create Product ko save krne ke liye 
             }

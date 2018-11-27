@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+    ConigurationsServices conigurationsServices = new ConigurationsServices();
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <!-- Basic Page Needs -->
@@ -32,6 +36,7 @@
         <script src="~/Content/javascript/html5shiv.js"></script>
         <script src="~/Content/javascript/respond.min.js"></script>
     <![endif]-->
+    <script src="~/Content/javascript/jquery.min.js"></script>
 </head>
 <body class="header_sticky header-style-2 has-menu-extra">
     <!-- Preloader -->
@@ -47,7 +52,7 @@
                 <div class="container-fluid clearfix container-width-93" id="site-header-inner">
                     <div id="logo" class="logo float-left">
                         <a href="index.html" title="logo">
-                            <img src="~/Content/images/logo.png" alt="image" width="107" height="24" data-retina="~/Content/images/logo@2x.png" data-width="107" data-height="24">
+                            <img src="~/Content/images/logo.png" alt="image" width="107" height="24" data-retina="images/logo@2x.png" data-width="107" data-height="24">
                         </a>
                     </div><!-- /.logo -->
                     <div class="mobile-button"><span></span></div>
@@ -177,7 +182,11 @@
                                 </div>
                             </form>
                             <ul class="flat-social">
-                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                            @*@{ 
+                              
+                                var facebookURL = conigurationsServices.GetConfig("FacebookURL");
+                            }*@
+                                <li><a href="@conigurationsServices.GetConfig("FacebookURL").Value"><i class="fa fa-facebook"></i></a></li>
                                 <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                                 <li><a href="#"><i class="fa fa-google"></i></a></li>
                                 <li><a href="#"><i class="fa fa-behance"></i></a></li>
@@ -229,7 +238,7 @@
                             </div>
                             <ul class="flat-contact">
                                 <li class="address">112 Kingdom, NA 12, New York</li>
-                                <li class="phone">+12 345 678 910</li>
+                                <li class="phone">@conigurationsServices.GetConfig("CompanyPhone").Value</li>
                                 <li class="email">infor.deercreative@gmail.com</li>
                             </ul><!-- /.flat-contact -->
                         </div><!-- /.widget -->
@@ -255,7 +264,6 @@
 
     </div>
     <!-- Javascript -->
-    <script src="~/Content/javascript/jquery.min.js"></script>
     <script src="~/Content/javascript/tether.min.js"></script>
     <script src="~/Content/javascript/bootstrap.min.js"></script>
     <script src="~/Content/javascript/jquery.easing.js"></script>
@@ -273,7 +281,7 @@
     <script src="~/Content/javascript/gmap3.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIEU6OT3xqCksCetQeNLIPps6-AYrhq-s&region=GB"></script>
     <script src="~/Content/javascript/jquery-ui.js"></script>
-                 
+
     <script src="~/Content/javascript/jquery.cookie.js"></script>
     <script src="~/Content/javascript/main.js"></script>
 
@@ -291,6 +299,6 @@
     <script src="~/Content/rev-slider/js/extensions/revolution.extension.parallax.min.js"></script>
     <script src="~/Content/rev-slider/js/extensions/revolution.extension.slideanims.min.js"></script>
     <script src="~/Content/rev-slider/js/extensions/revolution.extension.video.min.js"></script>
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 </html>

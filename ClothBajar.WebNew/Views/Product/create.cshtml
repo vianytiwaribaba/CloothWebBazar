@@ -1,30 +1,83 @@
-﻿
+﻿@model NewProductViewModel
 @{
     ViewBag.Title = "create";
+    var ImageURL = "Content/images/system/placeholder-image.png";
 }
 
 <h2>create Product</h2>
 
-<form id="createProduct">
-    <label>Name</label>
-    <input name="Name"/>
-    <br />
-   
-    <label>Description</label>
-    <input name="Description"/>
-    <br />
+<div>
+    <form id="createProduct">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select class="form-control" name="CategoryID">
+                        @foreach (var category in Model.AvailableCategories)
+                        {
+                            <option value="@category.ID">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" name="Name" />
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input class="form-control" name="Description" />
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input class="form-control" name="Price" />
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <input id="ImageURL" name="ImageURL" type="hidden" />
+                    <input class="form-control" id="imaupload" name="Image" type="file" accept=".png,.jpg" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="thumb">
+                    <img class="img-thumbnail img-fluid" id="productImage"src="@ImageURL" />
+                </div>
+            </div>
+        </div>
 
-    <label>Price</label>
-    <input name="Price"/>
-    <br />
+        <button id="savebtn" type="button" class="btn btn-primary">Save</button>
+    </form>
+</div>
 
-    <button id="savebtn" type="button">Save</button>
-</form>
+
+@*<form>
+
+        <label>Category</label>
+        <select name="CategoryID">
+            @foreach (var category in Model)
+            {
+                <option value="@category.ID">@category.Name</option>
+            }
+        </select>
+
+        <label>Name</label>
+        <input name="Name"/>
+        <br />
+
+        <label>Description</label>
+        <input name="Description"/>
+        <br />
+
+        <label>Price</label>
+        <input name="Price"/>
+        <br />
+
+        <button id="savebtn" type="button">Save</button>
+    </form>*@
 
 <script>
     $("#savebtn").click(function () {
         $.ajax({
-            type:'POST',
+            type: 'POST',
             url: '/Product/create',
             data: $("#createProduct").serialize()
         })
@@ -37,5 +90,43 @@
 
             });
     });
+   
+        $("#imaupload").change(function () {
+           debugger;
+           var element = this;
+
+           var formData = new FormData();
+
+           var totalFiles = element.files.length;
+
+           for (var i = 0; i < totalFiles; i++) {
+             var file = element.files[i];
+             formData.append("Photo", file);
+           }
+
+            $.ajax({
+            type: 'POST',
+            url: '/Shared/UploadImage',
+            data: formData,
+            contentType: false,
+            processData: false
+            })
+              .done(function (response) {
+                debugger;
+                console.log(response);
+
+                if (response.Success)
+                {
+                   $("#ImageURL").val(response.ImageURL);
+                    $("#productImage").attr("src", response.ImageURL);
+                }      
+             })
+               .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                 alert("fail");
+
+              });
+        });
+
+
 </script>
 

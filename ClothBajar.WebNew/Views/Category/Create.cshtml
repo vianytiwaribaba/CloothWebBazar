@@ -1,20 +1,86 @@
 ﻿
 @{
     ViewBag.Title = "Create";
+
+    //var imageURL = "Content/images/system/placeholder-image.png";
 }
 
 <h2>Create Category</h2>
-<form method="post">
-
-    <label>Name</label>
-    <input name="Name" />
-    <br /><br />
-
-    <label>Description</label>
-    <input name="Description"/>
-    <br />
-
+<form id="createcategory" method="post">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" name="Name" />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input class="form-control" name="Description" />
+            </div>
+            <div class="form-group">
+                <label>Image</label>
+                <input id="ImageURL" name="ImageURL" type="hidden" />
+                <input class="form-control" id="imaupload" name="Image" type="file" accept=".png,.jpg" />
+            </div>
+            <div class="form-group">
+                <label>IsFeatured</label>
+                <div class="input-group">
+                    <div class="redio form-control">
+                        <label><input name="IsFeatured" type="radio" value="true" /> true</label>
+                    </div>
+                    <div class="redio form-control">
+                        <label><input name="IsFeatured" type="radio" value="false" />false</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="thumb">
+                <img class="img-thumbnail img-fluid" id="categoryImage" />
+            </div>
+        </div>
+    </div>
+    
     <button type="submit">Save</button>
 
 </form>
+
+<script>
+    $("#imaupload").change(function () {
+        debugger;
+        var element = this;
+
+        var formData = new FormData();
+
+        var totalFiles = element.files.length;
+
+        for (var i = 0; i < totalFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/Shared/UploadImage',
+            datatype: 'json',
+            data: formData,
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                debugger;
+                console.log(response);
+
+                if (response.Success)
+                {
+                    $("#ImageURL").val(response.ImageURL);
+                    $("#categoryImage").attr("src", response.ImageURL);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("fail");
+
+            });
+    });
+</script>
 

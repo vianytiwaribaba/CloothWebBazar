@@ -1,0 +1,27 @@
+﻿@model ClothBajar.WebNew.ViewModel.CheckoutViewModel
+
+@if (Model != null)
+{
+    if (Model.CartProducts != null && Model.CartProducts.Count > 0)
+    {
+        <div>
+            @foreach (var product in Model.CartProducts)
+            {
+                var pruductQuintity = Model.CartProductIds.Where(productID => productID == product.ID).Count();
+          
+            <div>
+                Name: @product.Name - Price: @product.Price - Quintity: @pruductQuintity Totel Price:@(product.Price * pruductQuintity);
+            </div>
+            }
+        </div>
+        <div>
+            Totel Bill: @Model.CartProducts.Sum(x => x.Price * Model.CartProductIds.Where(productID => productID == x.ID).Count());
+        </div>
+    }
+    else
+    {
+            <div>
+                No cart Product.
+            </div>
+    }
+}

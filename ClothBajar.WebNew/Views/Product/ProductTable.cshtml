@@ -1,56 +1,144 @@
-﻿@model List<Product>
+﻿@model ProductSearchViewModel
 
 @{
     ViewBag.Title = "ProductTable";
 }
 
+<link rel="stylesheet"type="text/css"href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
 <div>
     <form method="post">
-        <input id="searchTxT" name="Search" />
-        <button type="button"id="searchBtn">Search</button>
-    </form>   
-    <button type="button"id="NewBtn">New</button>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>Search</label>
+                    <input class="form-control" id="searchTxT" name="Search"value="@Model.SearchTrem" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Action</label>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <button class=" btn btn-danger form-control" type="button" id="searchBtn">Search</button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class=" btn btn-danger form-control" type="button" id="resetbtn">Reset</button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class=" btn btn-danger form-control" type="button" id="NewBtn">New</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
 </div>
 
-<div id="TableContainer">
-    <table>
-        <thead>
-            <tr>
-                <td>Product Name</td>
-                <td>Category</td>
-                <td>Price</td>
-                <td>Action</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
+<div>
+    <div id="TableContainer">
+        <table id="ProductsTable" class="table table-striped">
+            <thead>
                 <tr>
-                    <td>@product.Name</td>
-                    <td>---</td>
-                    <td>@product.Price</td>
-                    <td>
-                        <button class="editBtn"data-id="@product.ID">Edit</button>
-                        <button class="DeleteBtn"data-id="@product.ID">Delete</button>
-                    </td>
+                    <td>Product Name</td>
+                    <td>Category</td>
+                    <td>Price</td>
+                    <td class="wrap-td">Action</td>
                 </tr>
+            </thead>
+            <tbody>
+                @if (Model.Products != null && Model.Products.Count > 0)
+                {
+                    foreach (var product in Model.Products)
+                    {
+                        <tr>
+                            <td>@product.Name</td>
+                            <td>
+                                @if (product.Category != null)
+                                {
+                                    <text>@product.Category.Name</text>
+                                }
+                                else
+                                {
+                                    <text> -</text>
+                                }
+                            </td>
+                            <td>@product.Price</td>
+                            <td class="wrap-td">
+                                <button class="editBtn" data-id="@product.ID">Edit</button>
+                                <button class="DeleteBtn" data-id="@product.ID">Delete</button>
+                                <button class="addtocart" data-id="@product.ID">Add To Cart</button>
+                            </td>
+                        </tr>
 
-            }
-        </tbody>
-    </table>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td class="text-danger" colspan="4"> No Produts found</td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+        <div>
+            <button class="pageButtons" data-pageNo="@(Model.PageNo - 1)">Previous</button>
+            <button class="pageButtons" data-pageNo="@(Model.PageNo + 1)">Next</button>
+
+        </div>
+    </div>
 </div>
-
 
 
 <script>
+    $('#ProductsTable').DataTable();
+
+    $(".pageButtons").click(function () {
+        $.ajax({
+            url: '/Product/ProductTable',
+            data: {
+                pageNo: $(this).attr("data-pageNo")
+            }
+
+        })
+            .done(function (response) {
+                $("#TableContainer").html(response);
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("fail");
+
+            });
+    });
+
     $("#searchBtn").click(function () {
         var searchvalue = $("#searchTxT").val();
 
         $.ajax({
             url: '/Product/ProductTable',
             data: {
-                search : searchvalue
+                search: searchvalue
+            }
+
+        })
+            .done(function (response) {
+                $("#TableContainer").html(response);
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("fail");
+
+            });
+    });
+
+    $("#resetbtn").click(function () {
+        var searchvalue ='';
+
+        $.ajax({
+            url: '/Product/ProductTable',
+            data: {
+                search: searchvalue
             }
 
         })
@@ -69,6 +157,8 @@
         })
             .done(function (response) {
                 $("#actionContainer").html(response);
+
+                focusAction("TableContainer");
             })
             .fail(function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("fail");
@@ -77,7 +167,7 @@
     });
 
     $(".editBtn").click(function () {
-       
+
         $.ajax({
             url: '/Product/Edit',
             data: {
@@ -95,25 +185,74 @@
     });
 
     $(".DeleteBtn").click(function () {
-        var confirmDelete = confirm("Are you sure you want to Delete This Product?");
-        if (confirmDelete)
-        {
-            $.ajax({
-                type:'POST',
-                url: '/Product/Delete',
-                data: {
-                    ID: $(this).attr('data-id'),
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure you want to Delete This Product?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Product/Delete',
+                        data: {
+                            ID: $(this).attr('data-id'),
+                        }
+                    })
+                        .done(function (response) {
+                            $("#TableContainer").html(response);
+
+                            swal("Poof! Your imaginary file has been deleted!", {
+                                icon: "success",
+                            });
+                        })
+                        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("fail");
+
+                        });
                 }
-            })
-                .done(function (response) {
-                    $("#TableContainer").html(response);
-                })
-                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("fail");
+            });
 
-                });
+        //var confirmDelete = confirm("Are you sure you want to Delete This Product?");
+        //if (confirmDelete) {
+        //    $.ajax({
+        //        type: 'POST',
+        //        url: '/Product/Delete',
+        //        data: {
+        //            ID: $(this).attr('data-id'),
+        //        }
+        //    })
+        //        .done(function (response) {
+        //            $("#TableContainer").html(response);
+        //        })
+        //        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+        //            alert("fail");
 
-        }
-    })
+        //        });
+
+        //}
+    });
+
+
+    var products = [];
+
+    $(".addtocart").click(function () {
+        var productID = $(this).attr('data-id');
+
+        products.push(productID);
+
+        $.cookie('cartproducts', products.join('-'), { path: '/' });
+
+        alert("Product added to cart");
+    });
+
+    function focusAction() {
+        $('html,body').Animate({
+            scrollTop: $("#actionContainer").offset().top - 100
+
+        }, 1000);
+    }
 
 </script>

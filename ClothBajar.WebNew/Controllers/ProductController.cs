@@ -1,5 +1,6 @@
 ﻿using ClothBajar.Entities;
 using ClothBajar.Services;
+using ClothBajar.WebNew.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace ClothBajar.WebNew.Controllers
     public class ProductController : Controller
     {
         ProductsServices productsServices = new ProductsServices();
+        CategoriesService categoryService = new CategoriesService();
+        //CategoriesService categoriesService = new CategoriesService();
 
         // GET: Product
         public ActionResult Index()
@@ -19,43 +22,86 @@ namespace ClothBajar.WebNew.Controllers
             return View();
         }
 
-        public ActionResult ProductTable(string search)
+        public ActionResult ProductTable(string search , int? pageNo)
         {
-            var products = productsServices.GetProducts();
+            ProductSearchViewModel model = new ProductSearchViewModel();
+
+            model.PageNo = pageNo.HasValue ? pageNo.Value > 0 ? pageNo.Value :1 : 1;
+
+            model.Products= productsServices.GetProducts(model.PageNo);
 
             if (string.IsNullOrEmpty(search) == false )
             {
-                products = products.Where(p =>p.Name != null && p.Name.ToLower().Contains(search.ToLower())).ToList();
+                model.SearchTrem = search;
+
+                model.Products =model.Products.Where(p =>p.Name != null && p.Name.ToLower().Contains(search.ToLower())).ToList();
             }
             
-            return  PartialView(products);
+            return  PartialView(model);
         }
 
         [HttpGet]
         public ActionResult create()
         {
-            return PartialView();
+            CategoriesService categoryService = new CategoriesService();
+            NewProductViewModel model = new NewProductViewModel();
+
+            model.AvailableCategories = categoryService.GetCategories();
+
+            return PartialView(model);
         }
         
         [HttpPost]
-        public ActionResult create(Product product)
+        public ActionResult create(NewProductViewModel model)
         {
-            productsServices.SaveProduct(product);
+            CategoriesService categoryService = new CategoriesService();
+
+            var newProduct = new Product();
+
+            newProduct.Name = model.Name;
+
+            newProduct.Description = model.Description;
+
+            newProduct.Price = model.Price;
+
+            newProduct.Category = categoryService.GetCategory(model.CategoryID);
+
+            newProduct.ImageURL = model.ImageURL;
+            
+            productsServices.SaveProduct(newProduct);
             return RedirectToAction("ProductTable");
         }
 
         [HttpGet]
         public ActionResult Edit(int ID)
         {
+            EditProductViewModel model = new EditProductViewModel();
+
             var product = productsServices.GetProduct(ID);
 
-            return  PartialView(product);
+            model.ID = product.ID;
+            model.Name = product.Name;
+            model.Description = product.Description;
+            model.Price = product.Price;
+            model.ImageURL = product.ImageURL;
+            //model.CategoryID = product.Category != null ? product.Category.ID : 0;
+
+            model.AvailableCategories = categoryService.GetCategories();
+
+            return  PartialView(model);
         }
 
         [HttpPost]
-        public ActionResult Edit(Product product)
+        public ActionResult Edit(EditProductViewModel model)
         {
-            productsServices.UpdateProduct(product);
+            var existingProduct = productsServices.GetProduct(model.ID);
+            existingProduct.Name = model.Name;
+            existingProduct.Description = model.Description;
+            existingProduct.Price = model.Price;
+            existingProduct.Category = categoryService.GetCategory(model.CategoryID);
+            existingProduct.ImageURL = model.ImageURL;
+
+            productsServices.UpdateProduct(existingProduct);
             return RedirectToAction("ProductTable");
         }
 

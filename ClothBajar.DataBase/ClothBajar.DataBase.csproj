@@ -52,6 +52,22 @@
     <Compile Include="Migrations\201810260951310_initilize.Designer.cs">
       <DependentUpon>201810260951310_initilize.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811190912081_ImageURLAdded.cs" />
+    <Compile Include="Migrations\201811190912081_ImageURLAdded.Designer.cs">
+      <DependentUpon>201811190912081_ImageURLAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811210904564_addedIsFeatured.cs" />
+    <Compile Include="Migrations\201811210904564_addedIsFeatured.Designer.cs">
+      <DependentUpon>201811210904564_addedIsFeatured.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811231534059_configurationstable.cs" />
+    <Compile Include="Migrations\201811231534059_configurationstable.Designer.cs">
+      <DependentUpon>201811231534059_configurationstable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811260650006_ImageURLinProducts.cs" />
+    <Compile Include="Migrations\201811260650006_ImageURLinProducts.Designer.cs">
+      <DependentUpon>201811260650006_ImageURLinProducts.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -68,6 +84,18 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201810260951310_initilize.resx">
       <DependentUpon>201810260951310_initilize.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811190912081_ImageURLAdded.resx">
+      <DependentUpon>201811190912081_ImageURLAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811210904564_addedIsFeatured.resx">
+      <DependentUpon>201811210904564_addedIsFeatured.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811231534059_configurationstable.resx">
+      <DependentUpon>201811231534059_configurationstable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811260650006_ImageURLinProducts.resx">
+      <DependentUpon>201811260650006_ImageURLinProducts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
